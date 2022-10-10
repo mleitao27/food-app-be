@@ -1,31 +1,34 @@
 const express = require('express');
-// const mongodb = require('mongodb');
-// const db = require('../modules/db');
-// const shiftsModule = require('../modules/shifts');
+const db = require("../models");
+const Recipe = db.recipes;
+const Op = db.Sequelize.Op;
 
 const router = express.Router();
 
-// Get shifts
+// Get recipes
 router.get('/', async (req, res) => {
-    res.status(200).send('index');
+  const recipes = await Recipe.findAll();
+  res.status(200).send(recipes);
 });
 
-// Get shift by id
+// Get recipe by id
 router.get('/:id', async (req, res) => {
     res.status(200).send('show');
 });
 
-// Add shift
+// Add recipe
 router.post('/', async (req, res) => {
+    const recipe = await Recipe.create({ name: "Jane", description: "Doe", img: "https://i0.wp.com/www.onceuponachef.com/images/2019/04/Chocolate-Mousse.jpg?resize=1120%2C1400&ssl=1" });
+    console.log(recipe)
     res.status(200).send('store');
 });
 
-// Update shift
+// Update recipe
 router.put('/:id', async (req, res) => {
     res.status(200).send('update');
 });
 
-// Delete shift
+// Delete recipe
 router.delete('/:id', (req, res) => {
     res.status(200).send('destroy');
 });

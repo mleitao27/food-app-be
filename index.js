@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+require('dotenv').config();
+const db = require("./models");
 
 const app = express();
 
@@ -8,17 +10,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+db.sequelize.sync({force: !!process.env.DB_RESET});
+
 const recipes = require('./routes/recipes');
-// const employees = require('./routes/employees');
-// const services = require('./routes/services');
-// const beneficiaries = require('./routes/beneficiaries');
-// const shifts = require('./routes/shifts');
 
 app.use('/api/recipes', recipes);
-// app.use('/api/employees', employees);
-// app.use('/api/services', services);
-// app.use('/api/beneficiaries', beneficiaries);
-// app.use('/api/shifts', shifts);
 
 const port = process.env.PORT || 5000;
 
