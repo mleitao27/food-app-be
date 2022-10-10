@@ -10,30 +10,54 @@
 ```
 version: '3.1'
 services:
-  food-app-fe:
-    container_name: food-app-fe
-    build:
-      context: ./food-app-fe
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    volumes:
-       - ./food-app-fe:/usr/src/app/food-app-fe
-       - /usr/src/app/food-app-fe/node_modules
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: always
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      MYSQL_ROOT_PASSWORD: Password123#
+      MYSQL_DATABASE: food-app
+      MYSQL_USER: server
+      MYSQL_PASSWORD: Password123#
+    volumes:
+      - food-data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 81:8080
   food-app-be:
     container_name: food-app-be
     build:
       context: ./food-app-be
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - '5000:5000'
     volumes:
        - ./food-app-be:/usr/src/app/food-app-be
        - /usr/src/app/food-app-be/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - mysql
+  food-app-fe:
+    container_name: food-app-fe
+    build:
+      context: ./food-app-fe
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    volumes:
+       - ./food-app-fe:/usr/src/app/food-app-fe
+       - /usr/src/app/food-app-fe/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - food-app-be
+volumes:
+  food-data:
 ```
 5 - Run
 ```
