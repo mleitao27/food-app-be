@@ -10,7 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-db.sequelize.sync({force: !!process.env.DB_RESET});
+db.sequelize.sync();
 
 const recipes = require('./routes/recipes');
 

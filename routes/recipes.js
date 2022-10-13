@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require("../models");
 const Recipe = db.recipes;
+const Step = db.steps;
 const Op = db.Sequelize.Op;
 
 const router = express.Router();
@@ -18,9 +19,18 @@ router.get('/:id', async (req, res) => {
 
 // Add recipe
 router.post('/', async (req, res) => {
-    const recipe = await Recipe.create({ name: "Jane", description: "Doe", img: "https://i0.wp.com/www.onceuponachef.com/images/2019/04/Chocolate-Mousse.jpg?resize=1120%2C1400&ssl=1" });
-    console.log(recipe)
-    res.status(200).send('store');
+    // Create recipe
+    const recipe = await Recipe.create({ name: req.body.name, description: req.body.description, img: req.body.img });
+    if(recipe) {
+        // Create recipe steps
+        let newSteps = await Promise.all(req.body.steps.map(async (step, index) => {
+            let newStep = await Step.create({ description: step, order: index + 1, recipeId: recipe.id })
+            return newStep
+        })) 
+        res.status(201).send({...recipe.dataValues, steps:newSteps});
+    }
+    else
+        res.status(500).send('failed to create recipe');
 });
 
 // Update recipe
