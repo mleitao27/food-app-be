@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Get recipes
 router.get('/', async (req, res) => {
-  const recipes = await Recipe.findAll();
+  const recipes = await Recipe.findAll({ include: Step });
   res.status(200).send(recipes);
 });
 
@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
         let newSteps = await Promise.all(req.body.steps.map(async (step, index) => {
             let newStep = await Step.create({ description: step, order: index + 1, recipeId: recipe.id })
             return newStep
-        })) 
+        }))
         res.status(201).send({...recipe.dataValues, steps:newSteps});
     }
     else
