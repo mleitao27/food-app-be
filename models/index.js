@@ -22,9 +22,13 @@ db.sequelize = sequelize;
 // Models
 db.recipes = require("./recipe.model.js")(sequelize, Sequelize);
 db.steps = require("./step.model.js")(sequelize, Sequelize);
+db.categories = require("./category.model.js")(sequelize, Sequelize);
 
 // Associations
 db.recipes[db.steps] = db.recipes.hasMany(db.steps);
 db.steps[db.recipes] = db.steps.belongsTo(db.recipes);
+
+db.recipes[db.categories] = db.recipes.belongsTo(db.categories);
+db.categories[db.recipes] = db.categories.hasMany(db.recipes);
 
 module.exports = db;

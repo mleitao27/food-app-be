@@ -2,9 +2,22 @@ const express = require('express');
 const db = require("../models");
 const Recipe = db.recipes;
 const Step = db.steps;
+const Category = db.categories;
 const Op = db.Sequelize.Op;
 
 const router = express.Router();
+
+// Radom recipes
+router.get('/random', async (req, res) => {
+    const categories = await Category.findAll({ include: Recipe });
+    
+    let results = [];
+    for (category in categories) {
+        console.log(category)
+    }
+
+    res.status(200).send(categories);
+});
 
 // Get recipes
 router.get('/', async (req, res) => {
@@ -20,7 +33,7 @@ router.get('/:id', async (req, res) => {
 // Add recipe
 router.post('/', async (req, res) => {
     // Create recipe
-    const recipe = await Recipe.create({ name: req.body.name, description: req.body.description, img: req.body.img });
+    const recipe = await Recipe.create({ name: req.body.name, description: req.body.description, img: req.body.img, categoryId: req.body.category });
     if(recipe) {
         // Create recipe steps
         let newSteps = await Promise.all(req.body.steps.map(async (step, index) => {
